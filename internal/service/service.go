@@ -1,22 +1,29 @@
 package service
 
 import (
+	"strings"
+	"unicode"
+
 	"github.com/WutHar/sprint6-final-v1/pkg/morse"
 )
 
 func DetectAndConvert(data string) (string, error) {
-	isMorse := true
-	for _, char := range data {
-		if char != '.' && char != '-' && char != ' ' {
-			isMorse = false
+
+	textFromMorse := morse.ToText(data)
+	textFromMorse = strings.TrimSpace(textFromMorse)
+
+	isLikelyMorse := false
+	for _, r := range textFromMorse {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			isLikelyMorse = true
 			break
 		}
 	}
 
-	if isMorse {
-		text := morse.ToText(data)
-		return text, nil
+	if isLikelyMorse {
+		return textFromMorse, nil
 	} else {
+
 		morseCode := morse.ToMorse(data)
 		return morseCode, nil
 	}
