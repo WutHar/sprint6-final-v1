@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/WutHar/sprint6-final-v1/internal/service"
 )
@@ -36,7 +38,6 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Парсим multipart form, с ограничением в 10 MB.
 	err := r.ParseMultipartForm(10 * 1024 * 1024)
 	if err != nil {
 		http.Error(w, "Could not parse form", http.StatusBadRequest)
@@ -64,6 +65,11 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responseText := convertedText
+	if !isMorse(fileContent) {
+		responseText = fileContent
+	}
+
 	timestamp := time.Now().UTC().String()
 	ext := filepath.Ext(header.Filename)
 	outputFilename := fmt.Sprintf("converted_%s%s", timestamp, ext)
@@ -73,7 +79,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error writing to file: %v", err)
 	}
 
-	response := fmt.Sprintf("Конвертированный текст:\n%s\n\nФайл сохранен как: %s", convertedText, outputFilename)
+	response := fmt.Sprintf("Конвертированный текст:\n%s\n\nФайл сохранен как: %s", responseText, outputFilename)
 	log.Printf("Ответ сервера: %q", response)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -82,4 +88,13 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error writing response: %v", err)
 	}
+}
+
+func isMorse(data string) bool {
+	for _, char := range data {
+		if !unicode.Is(unicode.Dash, char) && char != '.' && char != ' ' {
+			return false
+		}
+	}
+	return strings.ContainsAny(data, ".-")
 }
