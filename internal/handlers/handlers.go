@@ -31,7 +31,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error writing response: %v", err)
 	}
 }
-
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
