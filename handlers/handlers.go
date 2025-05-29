@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -61,7 +62,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Could not write to output file: %v", err), http.StatusInternalServerError)
 		return
 	}
-
+	log.Printf("DEBUG: Content to be written to HTTP response: %q", convertedContent)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(convertedContent))
