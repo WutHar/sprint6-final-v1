@@ -7,12 +7,7 @@ import (
 )
 
 func DetectAndConvert(data string) (string, error) {
-	isMorse := func(r rune) bool { return r == '.' || r == '-' || r == ' ' || r == '/' }
-
-	data = strings.TrimSpace(data)
-	if data == "" {
-		return "", nil
-	}
+	isMorse := func(r rune) bool { return r == '.' || r == '-' || r == ' ' }
 
 	if strings.ContainsFunc(data, isMorse) {
 		return morse.ToText(data), nil
