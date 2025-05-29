@@ -8,13 +8,10 @@ import (
 )
 
 func main() {
-	// Создаем логгер.
-	logger := log.New(os.Stdout, "http-server: ", log.LstdFlags)
 
-	// Создаем экземпляр сервера.
+	logger := log.New(os.Stdout, "http-server: ", log.LstdFlags)
 	srv := server.NewServer(logger)
 
-	// Запускаем сервер.
 	if err := srv.Start(); err != nil {
 		logger.Fatalf("Ошибка при запуске сервера: %v", err)
 	}

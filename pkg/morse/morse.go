@@ -64,8 +64,7 @@ const (
 	Cross        = ".-.-."  //+
 	CommercialAt = ".--.-." //@
 
-	Space    = " "
-	Alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+	Space = " "
 )
 
 type EncodingMap map[rune]string
