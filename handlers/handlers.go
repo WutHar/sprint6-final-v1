@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/WutHar/sprint6-final-v1/service"
@@ -47,27 +46,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	originalFilename := header.Filename
-	fileExtension := filepath.Ext(originalFilename)
-
-	baseName := fmt.Sprintf("converted_%s", time.Now().UTC().Format("2006-01-02_15-04-05.000000000"))
-	fileName := baseName
-	if fileExtension == "" {
-		fileName = fileName + ".txt"
-	} else {
-		fileName = fileName + fileExtension
-	}
-
-	// Ensure no problematic characters remain in filename from timestamp format
-	fileName = strings.ReplaceAll(fileName, ":", "_")
-	fileName = strings.ReplaceAll(fileName, "-", "_")
-	// If the extension was added, ensure only the last part is the extension
-	lastDotIndex := strings.LastIndex(fileName, ".")
-	if lastDotIndex != -1 && lastDotIndex < len(fileName)-1 { // Check if a dot exists and is not the very last char
-		fileName = strings.ReplaceAll(fileName[:lastDotIndex], ".", "_") + fileName[lastDotIndex:]
-	} else {
-		fileName = strings.ReplaceAll(fileName, ".", "_") // If no extension, just replace all dots
-	}
+	fileExtension := filepath.Ext(header.Filename)
+	fileName := fmt.Sprintf("converted_%s%s", time.Now().UTC().Format("2006-01-02_15-04-05.000000000"), fileExtension)
 
 	outputFile, err := os.Create(fileName)
 	if err != nil {
