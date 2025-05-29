@@ -39,7 +39,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte(converted)); err != nil {
+	_, err = w.Write([]byte(converted))
+	if err != nil {
 		log.Printf("Error writing response: %s", err.Error())
 	}
 }
