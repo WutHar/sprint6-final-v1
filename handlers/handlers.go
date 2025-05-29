@@ -9,10 +9,6 @@ import (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	http.ServeFile(w, r, "./index.html")
 }
 
@@ -24,14 +20,14 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "Could not get file from form", http.StatusBadRequest)
+		http.Error(w, "Could not retrieve file from form", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
 
 	content, err := io.ReadAll(file)
 	if err != nil {
-		http.Error(w, "Could not read file content", http.StatusInternalServerError)
+		http.Error(w, "Could not read file", http.StatusInternalServerError)
 		return
 	}
 

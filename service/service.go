@@ -7,13 +7,14 @@ import (
 )
 
 func DetectAndConvert(data string) (string, error) {
-	isMorse := func(r rune) bool { return r == '.' || r == '-' || r == ' ' }
+	isMorse := func(r rune) bool { return r == '.' || r == '-' || r == ' ' || r == '/' }
 
-	if strings.ContainsFunc(data, isMorse) {
-		// Для кода Морзе просто вызываем ToText
-		return morse.ToText(data), nil
+	if strings.TrimSpace(data) == "" {
+		return "", nil
 	}
 
-	// Для обычного текста вызываем ToMorse
+	if strings.ContainsFunc(data, isMorse) {
+		return morse.ToText(data), nil
+	}
 	return morse.ToMorse(data), nil
 }
