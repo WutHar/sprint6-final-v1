@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/WutHar/sprint6-final/service"
+	"github.com/WutHar/sprint6-final-v1/service"
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {

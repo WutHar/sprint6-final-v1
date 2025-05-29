@@ -3,7 +3,7 @@ package service
 import (
 	"strings"
 
-	"github.com/WutHar/sprint6-final/pkg/morse"
+	"github.com/WutHar/sprint6-final-v1/pkg/morse"
 )
 
 func DetectAndConvert(data string) (string, error) {
