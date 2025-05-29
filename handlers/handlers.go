@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/WutHar/sprint6-final-v1/service"
@@ -20,7 +19,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "Could not retrieve file from form", http.StatusBadRequest)
+		http.Error(w, "Could not get file", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -38,8 +37,5 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte(converted)); err != nil {
-		log.Printf("Error writing response: %s", err.Error())
-	}
+	w.Write([]byte(converted))
 }
