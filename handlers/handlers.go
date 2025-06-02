@@ -1,13 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"io"
-	"log"
 	"net/http"
-	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/WutHar/sprint6-final-v1/service"
 )
@@ -22,48 +17,25 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseMultipartForm(32 << 20)
+	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse form: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	file, header, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Could not get file from form: %v", err), http.StatusBadRequest)
+		http.Error(w, "Could not get file", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
 
 	content, err := io.ReadAll(file)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Could not read file content: %v", err), http.StatusInternalServerError)
+		http.Error(w, "Could not read file", http.StatusInternalServerError)
 		return
 	}
 
-	convertedContent, err := service.DetectAndConvert(string(content))
+	converted, err := service.DetectAndConvert(string(content))
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error converting content: %v", err), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fileExtension := filepath.Ext(header.Filename)
-	fileName := fmt.Sprintf("converted_%s%s", time.Now().UTC().Format("2006-01-02_15-04-05.000000000"), fileExtension)
-
-	outputFile, err := os.Create(fileName)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Could not create output file: %v", err), http.StatusInternalServerError)
-		return
-	}
-	defer outputFile.Close()
-
-	_, err = outputFile.WriteString(convertedContent)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Could not write to output file: %v", err), http.StatusInternalServerError)
-		return
-	}
-	log.Printf("DEBUG: Content to be written to HTTP response: %q", convertedContent)
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(convertedContent))
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(converted))
 }
